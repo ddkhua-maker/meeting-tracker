@@ -16,7 +16,8 @@ const MeetingDetails = ({
     partner: '',
     phone: '',
     location: '',
-    agenda: ''
+    agenda: '',
+    meeting_summary: ''
   });
 
   // Initialize form with meeting data or defaults
@@ -29,7 +30,8 @@ const MeetingDetails = ({
         partner: meeting.partner || '',
         phone: meeting.phone || '',
         location: meeting.location || '',
-        agenda: meeting.agenda || ''
+        agenda: meeting.agenda || '',
+        meeting_summary: meeting.meeting_summary || ''
       });
       setIsEditing(false); // Start in view mode for existing meetings
     } else {
@@ -40,7 +42,8 @@ const MeetingDetails = ({
         partner: '',
         phone: '',
         location: '',
-        agenda: ''
+        agenda: '',
+        meeting_summary: ''
       });
       setIsEditing(true); // Start in edit mode for new meetings
     }
@@ -168,6 +171,16 @@ const MeetingDetails = ({
                 <div className="text-base text-gray-900 whitespace-pre-wrap">{formData.agenda}</div>
               </div>
             )}
+
+            {/* Meeting Summary */}
+            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div className="text-sm font-medium text-gray-500 mb-1">Meeting Summary</div>
+              <div className="text-base text-gray-900 whitespace-pre-wrap">
+                {formData.meeting_summary || (
+                  <span className="text-gray-400 italic">No summary yet</span>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -305,6 +318,21 @@ const MeetingDetails = ({
               onChange={handleChange}
               placeholder="Enter meeting agenda"
               rows={4}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            />
+          </div>
+
+          {/* Meeting Summary */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Meeting Summary
+            </label>
+            <textarea
+              name="meeting_summary"
+              value={formData.meeting_summary}
+              onChange={handleChange}
+              placeholder="Add meeting notes and summary..."
+              rows={5}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
             />
           </div>

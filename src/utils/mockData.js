@@ -11,7 +11,8 @@ export const initialMeetings = [
     partner: 'Sarah Johnson',
     phone: '+1 555-0123',
     location: 'Conference Room A',
-    agenda: 'Discuss partnership opportunities and Q4 strategy'
+    agenda: 'Discuss partnership opportunities and Q4 strategy',
+    meeting_summary: 'Productive meeting discussing potential partnership for Q4. Agreed to follow up with proposal by end of week.'
   },
   {
     id: '2',
@@ -24,7 +25,8 @@ export const initialMeetings = [
     partner: 'Michael Chen',
     phone: '+1 555-0456',
     location: 'Meeting Room B',
-    agenda: 'Review marketing campaign results'
+    agenda: 'Review marketing campaign results',
+    meeting_summary: ''
   },
   {
     id: '3',
@@ -37,7 +39,8 @@ export const initialMeetings = [
     partner: 'Lisa Anderson',
     phone: '+1 555-0789',
     location: 'Board Room',
-    agenda: 'Product demo and technical discussion'
+    agenda: 'Product demo and technical discussion',
+    meeting_summary: ''
   },
   {
     id: '4',
@@ -50,7 +53,8 @@ export const initialMeetings = [
     partner: 'David Martinez',
     phone: '+1 555-0321',
     location: 'Executive Suite',
-    agenda: 'Investment opportunities and growth strategies'
+    agenda: 'Investment opportunities and growth strategies',
+    meeting_summary: 'Excellent discussion about future investment opportunities. They are interested in our new product line and will send terms next week.'
   }
 ];
 

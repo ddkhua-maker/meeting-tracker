@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS meetings (
   phone TEXT,
   location TEXT,
   agenda TEXT,
+  meeting_summary TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW())
 );
