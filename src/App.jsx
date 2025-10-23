@@ -7,7 +7,6 @@ import {
   fetchMeetings,
   createMeeting,
   updateMeeting,
-  deleteMeeting,
   subscribeToMeetings
 } from './services/meetingService';
 
@@ -114,25 +113,6 @@ function App() {
     }
   };
 
-  // Handle delete meeting
-  const handleDeleteMeeting = async (meetingId) => {
-    const { error } = await deleteMeeting(meetingId);
-
-    if (error) {
-      console.error('Error deleting meeting:', error);
-      alert('Failed to delete meeting');
-      return;
-    }
-
-    // Remove from local state
-    setMeetings(prev => prev.filter(m => m.id !== meetingId));
-    handleCloseDetails();
-
-    // Reload to ensure sync with database
-    if (isSupabaseConfigured()) {
-      loadMeetings();
-    }
-  };
 
   // Show loading state
   if (isLoading) {
@@ -173,7 +153,6 @@ function App() {
             selectedDate={selectedDate}
             onClose={handleCloseDetails}
             onSave={handleSaveMeeting}
-            onDelete={handleDeleteMeeting}
           />
         </div>
       )}

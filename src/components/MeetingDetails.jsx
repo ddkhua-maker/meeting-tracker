@@ -5,9 +5,10 @@ const MeetingDetails = ({
   timeSlot,
   selectedDate,
   onClose,
-  onSave,
-  onDelete
+  onSave
 }) => {
+  const [isEditing, setIsEditing] = useState(!meeting); // Edit mode for new meetings, view mode for existing
+  const [showToast, setShowToast] = useState(false);
   const [formData, setFormData] = useState({
     status: 'confirmed',
     twg_person: '',
@@ -30,6 +31,7 @@ const MeetingDetails = ({
         location: meeting.location || '',
         agenda: meeting.agenda || ''
       });
+      setIsEditing(false); // Start in view mode for existing meetings
     } else {
       setFormData({
         status: 'confirmed',
@@ -40,6 +42,7 @@ const MeetingDetails = ({
         location: '',
         agenda: ''
       });
+      setIsEditing(true); // Start in edit mode for new meetings
     }
   }, [meeting]);
 
@@ -60,9 +63,11 @@ const MeetingDetails = ({
     });
   };
 
-  const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this meeting?')) {
-      onDelete(meeting.id);
+  const handleCopyPhone = () => {
+    if (formData.phone) {
+      navigator.clipboard.writeText(formData.phone);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2000);
     }
   };
 
@@ -76,24 +81,112 @@ const MeetingDetails = ({
     return `${dateStr} at ${timeSlot}`;
   };
 
-  return (
-    <div className="h-screen bg-white flex flex-col">
-      {/* Header */}
-      <div className="border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900">
-            {meeting ? 'Edit Meeting' : 'New Meeting'}
-          </h2>
+  const getStatusDisplay = (status) => {
+    const statusMap = {
+      confirmed: { icon: '🟢', label: 'Confirmed' },
+      not_confirmed: { icon: '🔴', label: 'Not Confirmed' },
+      in_process: { icon: '🟡', label: 'In Process' }
+    };
+    return statusMap[status] || statusMap.confirmed;
+  };
+
+  // View Mode Component
+  const ViewMode = () => {
+    const statusDisplay = getStatusDisplay(formData.status);
+
+    return (
+      <>
+        <div className="flex-1 overflow-y-auto px-6 py-6">
+          <div className="space-y-4">
+            {/* Date & Time */}
+            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div className="text-sm font-medium text-gray-500 mb-1">Date & Time</div>
+              <div className="text-base text-gray-900 font-medium">{formatDateTime()}</div>
+            </div>
+
+            {/* Status */}
+            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div className="text-sm font-medium text-gray-500 mb-1">Status</div>
+              <div className="text-base text-gray-900 font-medium flex items-center gap-2">
+                <span>{statusDisplay.icon}</span>
+                <span>{statusDisplay.label}</span>
+              </div>
+            </div>
+
+            {/* TWG Person */}
+            {formData.twg_person && (
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="text-sm font-medium text-gray-500 mb-1">TWG Person</div>
+                <div className="text-base text-gray-900">{formData.twg_person}</div>
+              </div>
+            )}
+
+            {/* Company Name */}
+            {formData.company_name && (
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="text-sm font-medium text-gray-500 mb-1">Company Name</div>
+                <div className="text-base text-gray-900 font-medium">{formData.company_name}</div>
+              </div>
+            )}
+
+            {/* Partner */}
+            {formData.partner && (
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="text-sm font-medium text-gray-500 mb-1">Partner</div>
+                <div className="text-base text-gray-900">{formData.partner}</div>
+              </div>
+            )}
+
+            {/* Phone / WhatsApp */}
+            {formData.phone && (
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="text-sm font-medium text-gray-500 mb-1">Phone / WhatsApp</div>
+                <button
+                  onClick={handleCopyPhone}
+                  className="text-base text-blue-600 hover:text-blue-700 font-medium flex items-center gap-2 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                  </svg>
+                  {formData.phone}
+                </button>
+              </div>
+            )}
+
+            {/* Location */}
+            {formData.location && (
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="text-sm font-medium text-gray-500 mb-1">Location</div>
+                <div className="text-base text-gray-900">{formData.location}</div>
+              </div>
+            )}
+
+            {/* Agenda */}
+            {formData.agenda && (
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="text-sm font-medium text-gray-500 mb-1">Agenda</div>
+                <div className="text-base text-gray-900 whitespace-pre-wrap">{formData.agenda}</div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="border-t border-gray-200 px-6 py-4">
           <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
+            onClick={() => setIsEditing(true)}
+            className="w-full bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors"
           >
-            ×
+            Edit Meeting
           </button>
         </div>
-      </div>
+      </>
+    );
+  };
 
-      {/* Form */}
+  // Edit Mode Component
+  const EditMode = () => (
+    <>
       <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-6">
         <div className="space-y-5">
           {/* Date & Time (Read-only) */}
@@ -221,50 +314,57 @@ const MeetingDetails = ({
       {/* Action Buttons */}
       <div className="border-t border-gray-200 px-6 py-4">
         <div className="flex gap-3">
-          {meeting ? (
-            <>
-              <button
-                type="button"
-                onClick={handleSubmit}
-                className="flex-1 bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors"
-              >
-                Save Changes
-              </button>
-              <button
-                type="button"
-                onClick={handleDelete}
-                className="flex-1 bg-red-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-red-700 transition-colors"
-              >
-                Delete
-              </button>
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex-1 bg-gray-200 text-gray-700 px-6 py-2.5 rounded-lg font-medium hover:bg-gray-300 transition-colors"
-              >
-                Cancel
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                type="button"
-                onClick={handleSubmit}
-                className="flex-1 bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors"
-              >
-                Create
-              </button>
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex-1 bg-gray-200 text-gray-700 px-6 py-2.5 rounded-lg font-medium hover:bg-gray-300 transition-colors"
-              >
-                Cancel
-              </button>
-            </>
-          )}
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className="flex-1 bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+          >
+            {meeting ? 'Save Changes' : 'Create'}
+          </button>
+          <button
+            type="button"
+            onClick={meeting ? () => setIsEditing(false) : onClose}
+            className="flex-1 bg-gray-200 text-gray-700 px-6 py-2.5 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+          >
+            Cancel
+          </button>
         </div>
       </div>
+    </>
+  );
+
+  return (
+    <div className="h-screen bg-white flex flex-col relative">
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-fade-in">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          Phone copied!
+        </div>
+      )}
+
+      {/* Header */}
+      <div className="border-b border-gray-200 px-6 py-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold text-gray-900">
+            {meeting
+              ? (isEditing ? 'Edit Meeting' : 'Meeting Details')
+              : 'New Meeting'
+            }
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
+          >
+            ×
+          </button>
+        </div>
+      </div>
+
+      {/* Content */}
+      {meeting && !isEditing ? <ViewMode /> : <EditMode />}
     </div>
   );
 };
