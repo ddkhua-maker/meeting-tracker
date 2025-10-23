@@ -5,7 +5,7 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist', 'test-supabase.js', 'seed-database.js', 'run-migration.js']),
+  globalIgnores(['dist', 'test-supabase.js', 'seed-database.js', 'run-migration.js', 'add-column-directly.js', 'verify-column.js']),
   {
     files: ['**/*.{js,jsx}'],
     extends: [

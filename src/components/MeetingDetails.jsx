@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 
 const MeetingDetails = ({
   meeting,
@@ -49,32 +49,35 @@ const MeetingDetails = ({
     }
   }, [meeting]);
 
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
-  };
+  }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = useCallback((e) => {
     e.preventDefault();
-    onSave({
+    const dataToSave = {
       ...formData,
       date: selectedDate,
       time_slot: timeSlot
-    });
-  };
+    };
+    console.log('💾 MeetingDetails handleSubmit - Data to save:', dataToSave);
+    console.log('📋 meeting_summary value:', dataToSave.meeting_summary);
+    onSave(dataToSave);
+  }, [formData, selectedDate, timeSlot, onSave]);
 
-  const handleCopyPhone = () => {
+  const handleCopyPhone = useCallback(() => {
     if (formData.phone) {
       navigator.clipboard.writeText(formData.phone);
       setShowToast(true);
       setTimeout(() => setShowToast(false), 2000);
     }
-  };
+  }, [formData.phone]);
 
-  const formatDateTime = () => {
+  const formatDateTime = useCallback(() => {
     const date = new Date(selectedDate);
     const dateStr = date.toLocaleDateString('en-US', {
       month: 'short',
@@ -82,7 +85,7 @@ const MeetingDetails = ({
       year: 'numeric'
     });
     return `${dateStr} at ${timeSlot}`;
-  };
+  }, [selectedDate, timeSlot]);
 
   const getStatusDisplay = (status) => {
     const statusMap = {
@@ -93,8 +96,8 @@ const MeetingDetails = ({
     return statusMap[status] || statusMap.confirmed;
   };
 
-  // View Mode Component
-  const ViewMode = () => {
+  // View Mode Component - Memoized to prevent recreation on every render
+  const viewModeContent = useMemo(() => {
     const statusDisplay = getStatusDisplay(formData.status);
 
     return (
@@ -195,10 +198,10 @@ const MeetingDetails = ({
         </div>
       </>
     );
-  };
+  }, [formData, formatDateTime, handleCopyPhone, setIsEditing]);
 
-  // Edit Mode Component
-  const EditMode = () => (
+  // Edit Mode Component - Memoized to prevent recreation on every render
+  const editModeContent = useMemo(() => (
     <>
       <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-6">
         <div className="space-y-5">
@@ -359,7 +362,7 @@ const MeetingDetails = ({
         </div>
       </div>
     </>
-  );
+  ), [formData, meeting, formatDateTime, handleChange, handleSubmit, setIsEditing, onClose]);
 
   return (
     <div className="h-screen bg-white flex flex-col relative">
@@ -392,7 +395,7 @@ const MeetingDetails = ({
       </div>
 
       {/* Content */}
-      {meeting && !isEditing ? <ViewMode /> : <EditMode />}
+      {meeting && !isEditing ? viewModeContent : editModeContent}
     </div>
   );
 };

@@ -73,8 +73,12 @@ function App() {
 
   // Handle save meeting (create or update)
   const handleSaveMeeting = async (formData) => {
+    console.log('🔵 App.jsx handleSaveMeeting - Received formData:', formData);
+    console.log('🔵 meeting_summary in formData:', formData.meeting_summary);
+
     if (selectedMeeting) {
       // Update existing meeting
+      console.log('🔵 Updating existing meeting ID:', selectedMeeting.id);
       const { error } = await updateMeeting(selectedMeeting.id, formData);
 
       if (error) {
@@ -93,6 +97,7 @@ function App() {
       );
     } else {
       // Create new meeting
+      console.log('🔵 Creating new meeting');
       const { data, error } = await createMeeting(formData);
 
       if (error) {
