@@ -54,13 +54,13 @@ export const initialMeetings = [
   }
 ];
 
-// Generate time slots from 10:00 to 15:30 in 30-minute intervals
+// Generate time slots from 10:00 to 18:00 in 30-minute intervals
 export const generateTimeSlots = () => {
   const slots = [];
-  for (let hour = 10; hour < 16; hour++) {
+  for (let hour = 10; hour <= 18; hour++) {
     for (let minute = 0; minute < 60; minute += 30) {
       const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-      if (time <= '15:30') {
+      if (time <= '18:00') {
         slots.push(time);
       }
     }
