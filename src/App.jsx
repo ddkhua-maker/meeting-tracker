@@ -139,17 +139,23 @@ function App() {
 
   // Handle delete meeting
   const handleDeleteMeeting = async (meetingId) => {
+    if (!meetingId) {
+      if (import.meta.env.DEV) console.error('No meeting ID provided');
+      return { error: 'No meeting ID provided' };
+    }
+
     if (import.meta.env.DEV) console.log('🔵 Deleting meeting ID:', meetingId);
     
     // Optimistically remove from state
+    const previousMeetings = meetings;
     setMeetings(prev => prev.filter(m => m.id !== meetingId));
     
     const { error } = await deleteMeeting(meetingId);
     
     if (error) {
       if (import.meta.env.DEV) console.error('Error deleting meeting:', error);
-      // Reload meetings on error to restore state
-      loadMeetings();
+      // Rollback - restore previous state
+      setMeetings(previousMeetings);
       return { error };
     }
     

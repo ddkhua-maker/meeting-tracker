@@ -107,14 +107,23 @@ export const deleteMeeting = async (id) => {
   }
 
   try {
-    const { error } = await supabase
+    if (import.meta.env.DEV) console.log('🗑️ Deleting meeting ID:', id);
+    
+    const { data, error } = await supabase
       .from('meetings')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
+      .select();
+
+    if (error) {
+      if (import.meta.env.DEV) console.error('❌ Delete error:', error);
+    } else {
+      if (import.meta.env.DEV) console.log('✅ Meeting deleted:', data);
+    }
 
     return { error };
   } catch (error) {
-    console.error('Error deleting meeting:', error);
+    if (import.meta.env.DEV) console.error('Error deleting meeting:', error);
     return { error };
   }
 };

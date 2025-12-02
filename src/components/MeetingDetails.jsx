@@ -102,12 +102,20 @@ const MeetingDetails = ({
   }, [selectedDate, timeSlot]);
 
   const handleDelete = useCallback(async () => {
-    if (!meeting || !onDelete) return;
+    if (!meeting || !onDelete) {
+      if (import.meta.env.DEV) console.error('Missing meeting or onDelete handler');
+      return;
+    }
+    
+    if (import.meta.env.DEV) console.log('💾 MeetingDetails handleDelete - Meeting ID:', meeting.id);
     
     const { error } = await onDelete(meeting.id);
     
     if (error) {
-      alert('Failed to clear meeting data');
+      const errorMessage = error?.message || error || 'Failed to clear meeting data';
+      if (import.meta.env.DEV) console.error('Delete error:', errorMessage);
+      alert(`Failed to clear meeting data: ${errorMessage}`);
+      setShowDeleteConfirm(false);
       return;
     }
     
