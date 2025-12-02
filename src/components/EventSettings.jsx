@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useEvent } from '../context/EventContext';
+import GoogleCalendarConnect from './GoogleCalendarConnect';
 
 const EventSettings = ({ onClose }) => {
   const { eventConfig, updateEventConfig, getEventDuration } = useEvent();
@@ -136,6 +137,11 @@ const EventSettings = ({ onClose }) => {
             <p className="mt-1 text-xs text-secondary-text dark:text-dark-secondary-text">
               Changing this will automatically adjust the end date
             </p>
+          </div>
+
+          {/* Google Calendar Integration */}
+          <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+            <GoogleCalendarConnect />
           </div>
 
           {/* Preview */}

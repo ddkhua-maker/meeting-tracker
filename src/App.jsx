@@ -5,6 +5,7 @@ import EventSettings from './components/EventSettings';
 import { initialMeetings } from './utils/mockData';
 import { isSupabaseConfigured } from './lib/supabase';
 import { useEvent } from './context/EventContext';
+import { googleCalendarService } from './services/googleCalendarService';
 import {
   fetchMeetings,
   createMeeting,
@@ -121,6 +122,18 @@ function App() {
         );
         return;
       }
+
+      // Update Google Calendar event if enabled and event exists
+      if (formData.send_calendar_invite && selectedMeeting.google_event_id) {
+        try {
+          if (import.meta.env.DEV) console.log('📅 Updating Google Calendar event');
+          await googleCalendarService.updateEvent(selectedMeeting.google_event_id, updatedMeeting);
+        } catch (calError) {
+          console.error('Calendar update failed:', calError);
+          // Don't block the meeting update if calendar fails
+          alert('Meeting saved but calendar update failed. Please check your calendar connection.');
+        }
+      }
     } else {
       // Create new meeting
       if (import.meta.env.DEV) console.log('🔵 Creating new meeting');
@@ -130,6 +143,28 @@ function App() {
         if (import.meta.env.DEV) console.error('Error creating meeting:', error);
         alert('Failed to create meeting');
         return;
+      }
+
+      // Create Google Calendar event if enabled
+      if (formData.send_calendar_invite && formData.partner_email) {
+        try {
+          if (import.meta.env.DEV) console.log('📅 Creating Google Calendar event');
+          const calendarResult = await googleCalendarService.createEvent(data);
+          
+          // Update meeting with calendar event ID
+          if (calendarResult.eventId) {
+            await updateMeeting(data.id, {
+              google_event_id: calendarResult.eventId,
+              google_event_link: calendarResult.eventLink
+            });
+          }
+          
+          if (import.meta.env.DEV) console.log('✅ Calendar invite sent successfully');
+        } catch (calError) {
+          console.error('Calendar creation failed:', calError);
+          // Meeting is created, but calendar failed
+          alert('Meeting created but calendar invite failed. You can edit the meeting and try again.');
+        }
       }
 
       // Add to local state (real-time subscription will also add it, but this is immediate)
@@ -150,6 +185,9 @@ function App() {
 
     if (import.meta.env.DEV) console.log('🔵 Deleting meeting ID:', meetingId);
     
+    // Get meeting before deleting to check for calendar event
+    const meetingToDelete = meetings.find(m => m.id === meetingId);
+    
     // Optimistically remove from state
     const previousMeetings = meetings;
     setMeetings(prev => prev.filter(m => m.id !== meetingId));
@@ -161,6 +199,19 @@ function App() {
       // Rollback - restore previous state
       setMeetings(previousMeetings);
       return { error };
+    }
+
+    // Delete Google Calendar event if it exists
+    if (meetingToDelete?.google_event_id) {
+      try {
+        if (import.meta.env.DEV) console.log('📅 Deleting Google Calendar event');
+        await googleCalendarService.deleteEvent(meetingToDelete.google_event_id);
+        if (import.meta.env.DEV) console.log('✅ Calendar event deleted successfully');
+      } catch (calError) {
+        console.error('Calendar deletion failed:', calError);
+        // Meeting is deleted, but calendar event might still exist
+        // This is not critical, user can manually delete from calendar
+      }
     }
     
     handleCloseDetails();
