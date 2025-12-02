@@ -26,6 +26,26 @@ export default {
         'dark-primary-text': '#E8EAED',
         'dark-secondary-text': '#9AA0A6',
         
+        // Status Badge Colors - Confirmed
+        'status-confirmed-bg-light': '#D4EDDA',
+        'status-confirmed-text-light': '#155724',
+        'status-confirmed-dot-light': '#28A745',
+        'status-confirmed-border-light': '#C3E6CB',
+        'status-confirmed-bg-dark': '#2D4A3E',
+        'status-confirmed-text-dark': '#A8E6CF',
+        'status-confirmed-dot-dark': '#4ADE80',
+        'status-confirmed-border-dark': '#3D5A4E',
+        
+        // Status Badge Colors - Pending
+        'status-pending-bg-light': '#FFF3CD',
+        'status-pending-text-light': '#856404',
+        'status-pending-dot-light': '#FFC107',
+        'status-pending-border-light': '#FFEAA7',
+        'status-pending-bg-dark': '#4A4230',
+        'status-pending-text-dark': '#FFE4A3',
+        'status-pending-dot-dark': '#FCD34D',
+        'status-pending-border-dark': '#5A5240',
+        
         // Legacy colors (keeping for backward compatibility)
         'sigma-yellow': '#FFD93D',
         'status-confirmed-bg': '#86EFAC',

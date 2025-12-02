@@ -126,15 +126,18 @@ const MeetingDetails = ({
     const statusMap = {
       confirmed: { 
         label: 'Confirmed',
-        badgeClass: 'bg-confirmed dark:bg-dark-confirmed text-green-900 dark:text-green-100 border-green-300 dark:border-green-600'
+        badgeClass: 'bg-status-confirmed-bg-light dark:bg-status-confirmed-bg-dark text-status-confirmed-text-light dark:text-status-confirmed-text-dark border-status-confirmed-border-light dark:border-status-confirmed-border-dark',
+        dotClass: 'bg-status-confirmed-dot-light dark:bg-status-confirmed-dot-dark'
       },
       not_confirmed: { 
         label: 'Not Confirmed',
-        badgeClass: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 border-red-300 dark:border-red-700'
+        badgeClass: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 border-red-300 dark:border-red-700',
+        dotClass: 'bg-red-600 dark:bg-red-400'
       },
       in_process: { 
         label: 'In Process',
-        badgeClass: 'bg-pending dark:bg-dark-pending text-yellow-900 dark:text-yellow-100 border-yellow-300 dark:border-yellow-600'
+        badgeClass: 'bg-status-pending-bg-light dark:bg-status-pending-bg-dark text-status-pending-text-light dark:text-status-pending-text-dark border-status-pending-border-light dark:border-status-pending-border-dark',
+        dotClass: 'bg-status-pending-dot-light dark:bg-status-pending-dot-dark'
       }
     };
     return statusMap[status] || statusMap.confirmed;
@@ -156,8 +159,8 @@ const MeetingDetails = ({
           {/* Status Badge */}
           <div className="bg-app-bg dark:bg-dark-app-bg rounded-card p-4 border border-gray-200 dark:border-gray-700 transition-theme duration-300">
             <div className="text-sm font-medium text-secondary-text dark:text-dark-secondary-text mb-2">Status</div>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border transition-theme duration-300 ${statusDisplay.badgeClass}">
-              <span className="w-2 h-2 rounded-full bg-current"></span>
+            <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border transition-theme duration-300 ${statusDisplay.badgeClass}`}>
+              <span className={`w-2 h-2 rounded-full ${statusDisplay.dotClass}`}></span>
               <span className="text-sm font-medium">{statusDisplay.label}</span>
             </div>
           </div>
