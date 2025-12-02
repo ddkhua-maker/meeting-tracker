@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import Calendar from './components/Calendar';
 import MeetingDetails from './components/MeetingDetails';
-import { initialMeetings, eventDates } from './utils/mockData';
+import EventSettings from './components/EventSettings';
+import { initialMeetings } from './utils/mockData';
 import { isSupabaseConfigured } from './lib/supabase';
+import { useEvent } from './context/EventContext';
 import {
   fetchMeetings,
   createMeeting,
@@ -12,11 +14,13 @@ import {
 } from './services/meetingService';
 
 function App() {
+  const { eventConfig } = useEvent();
   const [meetings, setMeetings] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(eventDates[0]);
+  const [selectedDate, setSelectedDate] = useState(eventConfig.startDate);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [selectedMeeting, setSelectedMeeting] = useState(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   // Load meetings from Supabase or mock data
@@ -196,6 +200,7 @@ function App() {
           onSlotClick={handleSlotClick}
           selectedDate={selectedDate}
           setSelectedDate={setSelectedDate}
+          onSettingsClick={() => setIsSettingsOpen(true)}
         />
       </div>
 
@@ -236,6 +241,11 @@ function App() {
             <p className="text-sm">Click on a time slot to view or create a meeting</p>
           </div>
         </div>
+      )}
+
+      {/* Event Settings Modal */}
+      {isSettingsOpen && (
+        <EventSettings onClose={() => setIsSettingsOpen(false)} />
       )}
     </div>
   );
