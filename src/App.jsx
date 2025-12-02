@@ -178,12 +178,19 @@ function App() {
 
   return (
     <div className="flex h-screen bg-app-bg dark:bg-dark-app-bg transition-theme duration-300">
+      {/* Mock Data Notice */}
+      {!isSupabaseConfigured() && (
+        <div className="fixed top-0 left-0 right-0 z-50 bg-yellow-500 dark:bg-yellow-600 text-gray-900 dark:text-gray-100 px-4 py-2 text-center text-sm font-medium">
+          ⚠️ Running in demo mode with mock data. Changes will not be saved.
+        </div>
+      )}
+
       {/* Mobile: Full screen modal, Desktop: Two-column layout */}
 
       {/* Left Panel - Calendar */}
       <div className={`${
         isDetailsOpen ? 'hidden lg:block' : 'block'
-      } w-full lg:w-1/2 xl:w-2/5`}>
+      } w-full lg:w-1/2 xl:w-2/5 ${!isSupabaseConfigured() ? 'mt-10' : ''}`}>
         <Calendar
           meetings={meetings}
           onSlotClick={handleSlotClick}
