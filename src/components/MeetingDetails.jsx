@@ -126,7 +126,7 @@ const MeetingDetails = ({
     const statusMap = {
       confirmed: { 
         label: 'Confirmed',
-        badgeClass: 'bg-confirmed dark:bg-dark-confirmed text-green-800 dark:text-green-200 border-green-300 dark:border-green-700'
+        badgeClass: 'bg-confirmed dark:bg-dark-confirmed text-green-900 dark:text-green-100 border-green-300 dark:border-green-600'
       },
       not_confirmed: { 
         label: 'Not Confirmed',
@@ -134,7 +134,7 @@ const MeetingDetails = ({
       },
       in_process: { 
         label: 'In Process',
-        badgeClass: 'bg-pending dark:bg-dark-pending text-yellow-800 dark:text-yellow-200 border-yellow-300 dark:border-yellow-700'
+        badgeClass: 'bg-pending dark:bg-dark-pending text-yellow-900 dark:text-yellow-100 border-yellow-300 dark:border-yellow-600'
       }
     };
     return statusMap[status] || statusMap.confirmed;
