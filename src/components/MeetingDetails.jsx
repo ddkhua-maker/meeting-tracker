@@ -5,7 +5,8 @@ const MeetingDetails = ({
   timeSlot,
   selectedDate,
   onClose,
-  onSave
+  onSave,
+  onDelete
 }) => {
   const [isEditing, setIsEditing] = useState(!meeting); // Edit mode for new meetings, view mode for existing
   const [showToast, setShowToast] = useState(false);
@@ -101,26 +102,17 @@ const MeetingDetails = ({
   }, [selectedDate, timeSlot]);
 
   const handleDelete = useCallback(async () => {
-    if (!meeting) return;
+    if (!meeting || !onDelete) return;
     
-    // Clear all meeting data but keep the slot
-    const clearedData = {
-      status: 'confirmed',
-      twg_person: '',
-      company_name: '',
-      partner: '',
-      phone: '',
-      location: '',
-      agenda: '',
-      meeting_summary: '',
-      date: selectedDate,
-      time_slot: timeSlot
-    };
+    const { error } = await onDelete(meeting.id);
     
-    // Save the cleared data (this updates the meeting to be empty)
-    onSave(clearedData);
+    if (error) {
+      alert('Failed to clear meeting data');
+      return;
+    }
+    
     setShowDeleteConfirm(false);
-  }, [meeting, selectedDate, timeSlot, onSave]);
+  }, [meeting, onDelete]);
 
   const getStatusDisplay = (status) => {
     const statusMap = {

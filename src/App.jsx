@@ -7,6 +7,7 @@ import {
   fetchMeetings,
   createMeeting,
   updateMeeting,
+  deleteMeeting,
   subscribeToMeetings
 } from './services/meetingService';
 
@@ -136,6 +137,26 @@ function App() {
     handleCloseDetails();
   };
 
+  // Handle delete meeting
+  const handleDeleteMeeting = async (meetingId) => {
+    if (import.meta.env.DEV) console.log('🔵 Deleting meeting ID:', meetingId);
+    
+    // Optimistically remove from state
+    setMeetings(prev => prev.filter(m => m.id !== meetingId));
+    
+    const { error } = await deleteMeeting(meetingId);
+    
+    if (error) {
+      if (import.meta.env.DEV) console.error('Error deleting meeting:', error);
+      // Reload meetings on error to restore state
+      loadMeetings();
+      return { error };
+    }
+    
+    handleCloseDetails();
+    return { error: null };
+  };
+
 
   // Show loading state
   if (isLoading) {
@@ -176,6 +197,7 @@ function App() {
             selectedDate={selectedDate}
             onClose={handleCloseDetails}
             onSave={handleSaveMeeting}
+            onDelete={handleDeleteMeeting}
           />
         </div>
       )}
