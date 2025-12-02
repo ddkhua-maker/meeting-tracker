@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { eventDates, formatDateDisplay, generateTimeSlots } from '../utils/mockData';
+import ThemeToggle from './ThemeToggle';
 
 const Calendar = ({ meetings, onSlotClick, selectedDate, setSelectedDate }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -36,46 +37,51 @@ const Calendar = ({ meetings, onSlotClick, selectedDate, setSelectedDate }) => {
     return companyMatch || personMatch || partnerMatch;
   };
 
-  // Get status styling
+  // Get status styling with new design
   const getStatusStyle = (status) => {
     switch (status) {
       case 'confirmed':
-        return 'bg-status-confirmed-bg border-status-confirmed-border';
+        return 'bg-confirmed dark:bg-dark-confirmed border-green-300 dark:border-green-700';
       case 'not_confirmed':
-        return 'bg-status-not-confirmed-bg border-status-not-confirmed-border';
+        return 'bg-red-50 dark:bg-red-900/20 border-red-300 dark:border-red-700';
       case 'in_process':
-        return 'bg-status-in-process-bg border-status-in-process-border';
+        return 'bg-pending dark:bg-dark-pending border-yellow-300 dark:border-yellow-700';
       default:
-        return 'bg-white border-gray-300';
+        return 'bg-card-bg dark:bg-dark-card-bg border-gray-300 dark:border-gray-600';
     }
   };
 
   return (
-    <div className="h-screen bg-gray-50 flex flex-col">
+    <div className="h-screen bg-app-bg dark:bg-dark-app-bg flex flex-col transition-theme duration-300">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">
-          SiGMA Central Europe 2025
-        </h1>
-        <p className="text-sm text-gray-600">
-          Rome, Italy • CET (UTC+1)
-        </p>
+      <div className="bg-card-bg dark:bg-dark-card-bg border-b border-gray-200 dark:border-gray-700 p-6 transition-theme duration-300">
+        <div className="flex items-start justify-between mb-2">
+          <div>
+            <h1 className="text-2xl font-bold text-primary-text dark:text-dark-primary-text mb-1">
+              SiGMA Central Europe 2025
+            </h1>
+            <p className="text-sm text-secondary-text dark:text-dark-secondary-text">
+              Rome, Italy • CET (UTC+1)
+            </p>
+          </div>
+          <ThemeToggle />
+        </div>
       </div>
 
       {/* Search Bar */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-card-bg dark:bg-dark-card-bg border-b border-gray-200 dark:border-gray-700 px-6 py-4 transition-theme duration-300">
         <div className="relative">
           <input
             type="text"
             placeholder="Search by company, person, or partner..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2.5 pr-10 bg-app-bg dark:bg-dark-app-bg border border-gray-300 dark:border-gray-600 rounded-lg text-primary-text dark:text-dark-primary-text placeholder-secondary-text dark:placeholder-dark-secondary-text focus:outline-none focus:ring-2 focus:ring-accent dark:focus:ring-dark-accent transition-theme duration-300"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary-text dark:text-dark-secondary-text hover:text-primary-text dark:hover:text-dark-primary-text transition-colors"
               title="Clear search"
             >
               <svg
@@ -95,23 +101,23 @@ const Calendar = ({ meetings, onSlotClick, selectedDate, setSelectedDate }) => {
           )}
         </div>
         {searchQuery && (
-          <p className="text-xs text-gray-500 mt-2">
+          <p className="text-xs text-secondary-text dark:text-dark-secondary-text mt-2">
             Searching for "{searchQuery}" - {timeSlots.filter(shouldShowSlot).length} result(s)
           </p>
         )}
       </div>
 
       {/* Date Buttons */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-card-bg dark:bg-dark-card-bg border-b border-gray-200 dark:border-gray-700 px-6 py-4 transition-theme duration-300">
         <div className="grid grid-cols-4 gap-2">
           {eventDates.map(date => (
             <button
               key={date}
               onClick={() => setSelectedDate(date)}
-              className={`px-4 py-3 rounded-lg font-medium text-sm transition-colors ${
+              className={`px-4 py-3 rounded-card font-medium text-sm transition-all duration-300 ${
                 selectedDate === date
-                  ? 'bg-sigma-yellow text-gray-900'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-accent dark:bg-dark-accent text-white shadow-card'
+                  : 'bg-app-bg dark:bg-dark-app-bg text-primary-text dark:text-dark-primary-text hover:bg-gray-200 dark:hover:bg-gray-700'
               }`}
             >
               {formatDateDisplay(date)}
@@ -127,7 +133,7 @@ const Calendar = ({ meetings, onSlotClick, selectedDate, setSelectedDate }) => {
             // No results message when searching
             <div className="text-center py-12">
               <svg
-                className="mx-auto h-12 w-12 text-gray-400 mb-3"
+                className="mx-auto h-12 w-12 text-secondary-text dark:text-dark-secondary-text mb-3"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -139,8 +145,8 @@ const Calendar = ({ meetings, onSlotClick, selectedDate, setSelectedDate }) => {
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
               </svg>
-              <p className="text-gray-600 font-medium mb-1">No meetings found</p>
-              <p className="text-gray-500 text-sm">
+              <p className="text-primary-text dark:text-dark-primary-text font-medium mb-1">No meetings found</p>
+              <p className="text-secondary-text dark:text-dark-secondary-text text-sm">
                 Try searching for a different company, person, or partner
               </p>
             </div>
@@ -153,27 +159,27 @@ const Calendar = ({ meetings, onSlotClick, selectedDate, setSelectedDate }) => {
                 <button
                   key={timeSlot}
                   onClick={() => onSlotClick(timeSlot, meeting)}
-                  className={`w-full text-left p-4 rounded-lg border-2 transition-all hover:shadow-md ${
+                  className={`w-full text-left p-4 rounded-card border-2 transition-all duration-300 hover:shadow-card ${
                     meeting
                       ? getStatusStyle(meeting.status)
-                      : 'bg-white border-dashed border-gray-300 hover:border-blue-400'
+                      : 'bg-card-bg dark:bg-dark-card-bg border-dashed border-gray-300 dark:border-gray-600 hover:border-accent dark:hover:border-dark-accent'
                   }`}
                 >
                   {meeting ? (
                     <div>
-                      <div className="font-semibold text-gray-900 mb-1">
+                      <div className="font-semibold text-primary-text dark:text-dark-primary-text mb-1">
                         {timeSlot} - {meeting.company_name}
                       </div>
-                      <div className="text-sm text-gray-700">
+                      <div className="text-sm text-secondary-text dark:text-dark-secondary-text">
                         {meeting.twg_person}
                       </div>
                     </div>
                   ) : (
                     <div className="text-center">
-                      <div className="font-medium text-gray-500 mb-1">
+                      <div className="font-medium text-secondary-text dark:text-dark-secondary-text mb-1">
                         {timeSlot}
                       </div>
-                      <div className="text-sm text-blue-500">
+                      <div className="text-sm text-accent dark:text-dark-accent">
                         + Add meeting
                       </div>
                     </div>

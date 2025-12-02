@@ -140,17 +140,17 @@ function App() {
   // Show loading state
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50">
+      <div className="flex h-screen items-center justify-center bg-app-bg dark:bg-dark-app-bg transition-theme duration-300">
         <div className="text-center">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
-          <p className="mt-3 text-gray-600">Loading meetings...</p>
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-accent dark:border-dark-accent border-r-transparent"></div>
+          <p className="mt-3 text-secondary-text dark:text-dark-secondary-text">Loading meetings...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-app-bg dark:bg-dark-app-bg transition-theme duration-300">
       {/* Mobile: Full screen modal, Desktop: Two-column layout */}
 
       {/* Left Panel - Calendar */}
@@ -182,8 +182,8 @@ function App() {
 
       {/* Empty state for right panel on desktop when nothing selected */}
       {!isDetailsOpen && (
-        <div className="hidden lg:flex lg:w-1/2 xl:w-3/5 items-center justify-center bg-white border-l border-gray-200">
-          <div className="text-center text-gray-400">
+        <div className="hidden lg:flex lg:w-1/2 xl:w-3/5 items-center justify-center bg-card-bg dark:bg-dark-card-bg border-l border-gray-200 dark:border-gray-700 transition-theme duration-300">
+          <div className="text-center text-secondary-text dark:text-dark-secondary-text">
             <svg
               className="mx-auto h-12 w-12 mb-3"
               fill="none"
@@ -197,7 +197,7 @@ function App() {
                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            <p className="text-lg font-medium">Select a time slot</p>
+            <p className="text-lg font-medium text-primary-text dark:text-dark-primary-text">Select a time slot</p>
             <p className="text-sm">Click on a time slot to view or create a meeting</p>
           </div>
         </div>
