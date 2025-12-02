@@ -41,8 +41,10 @@ export const createMeeting = async (meetingData) => {
       ...meetingData
     };
 
-    console.log('📤 Creating meeting with data:', insertData);
-    console.log('📋 meeting_summary in data:', insertData.meeting_summary);
+    if (import.meta.env.DEV) {
+      console.log('📤 Creating meeting with data:', insertData);
+      console.log('📋 meeting_summary in data:', insertData.meeting_summary);
+    }
 
     const { data, error } = await supabase
       .from('meetings')
@@ -51,9 +53,9 @@ export const createMeeting = async (meetingData) => {
       .single();
 
     if (error) {
-      console.error('❌ Create error:', error);
+      if (import.meta.env.DEV) console.error('❌ Create error:', error);
     } else {
-      console.log('✅ Meeting created:', data);
+      if (import.meta.env.DEV) console.log('✅ Meeting created:', data);
     }
 
     return { data, error };
@@ -71,9 +73,11 @@ export const updateMeeting = async (id, meetingData) => {
   }
 
   try {
-    console.log('📤 Updating meeting ID:', id);
-    console.log('📤 Update data:', meetingData);
-    console.log('📋 meeting_summary in data:', meetingData.meeting_summary);
+    if (import.meta.env.DEV) {
+      console.log('📤 Updating meeting ID:', id);
+      console.log('📤 Update data:', meetingData);
+      console.log('📋 meeting_summary in data:', meetingData.meeting_summary);
+    }
 
     const { data, error } = await supabase
       .from('meetings')
@@ -83,9 +87,9 @@ export const updateMeeting = async (id, meetingData) => {
       .single();
 
     if (error) {
-      console.error('❌ Update error:', error);
+      if (import.meta.env.DEV) console.error('❌ Update error:', error);
     } else {
-      console.log('✅ Meeting updated:', data);
+      if (import.meta.env.DEV) console.log('✅ Meeting updated:', data);
     }
 
     return { data, error };

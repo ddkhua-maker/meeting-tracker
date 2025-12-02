@@ -9,6 +9,7 @@ const MeetingDetails = ({
 }) => {
   const [isEditing, setIsEditing] = useState(!meeting); // Edit mode for new meetings, view mode for existing
   const [showToast, setShowToast] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [formData, setFormData] = useState({
     status: 'confirmed',
     twg_person: '',
@@ -49,6 +50,17 @@ const MeetingDetails = ({
     }
   }, [meeting]);
 
+  // Cleanup toast timeout on unmount
+  useEffect(() => {
+    let timeoutId;
+    if (showToast) {
+      timeoutId = setTimeout(() => setShowToast(false), 2000);
+    }
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [showToast]);
+
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -64,8 +76,10 @@ const MeetingDetails = ({
       date: selectedDate,
       time_slot: timeSlot
     };
-    console.log('💾 MeetingDetails handleSubmit - Data to save:', dataToSave);
-    console.log('📋 meeting_summary value:', dataToSave.meeting_summary);
+    if (import.meta.env.DEV) {
+      console.log('💾 MeetingDetails handleSubmit - Data to save:', dataToSave);
+      console.log('📋 meeting_summary value:', dataToSave.meeting_summary);
+    }
     onSave(dataToSave);
   }, [formData, selectedDate, timeSlot, onSave]);
 
@@ -73,7 +87,6 @@ const MeetingDetails = ({
     if (formData.phone) {
       navigator.clipboard.writeText(formData.phone);
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 2000);
     }
   }, [formData.phone]);
 
@@ -86,6 +99,28 @@ const MeetingDetails = ({
     });
     return `${dateStr} at ${timeSlot}`;
   }, [selectedDate, timeSlot]);
+
+  const handleDelete = useCallback(async () => {
+    if (!meeting) return;
+    
+    // Clear all meeting data but keep the slot
+    const clearedData = {
+      status: 'confirmed',
+      twg_person: '',
+      company_name: '',
+      partner: '',
+      phone: '',
+      location: '',
+      agenda: '',
+      meeting_summary: '',
+      date: selectedDate,
+      time_slot: timeSlot
+    };
+    
+    // Save the cleared data (this updates the meeting to be empty)
+    onSave(clearedData);
+    setShowDeleteConfirm(false);
+  }, [meeting, selectedDate, timeSlot, onSave]);
 
   const getStatusDisplay = (status) => {
     const statusMap = {
@@ -189,12 +224,20 @@ const MeetingDetails = ({
 
         {/* Action Buttons */}
         <div className="border-t border-gray-200 px-6 py-4">
-          <button
-            onClick={() => setIsEditing(true)}
-            className="w-full bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors"
-          >
-            Edit Meeting
-          </button>
+          <div className="space-y-3">
+            <button
+              onClick={() => setIsEditing(true)}
+              className="w-full bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            >
+              Edit Meeting
+            </button>
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              className="w-full bg-red-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-red-700 transition-colors"
+            >
+              Clear Meeting Data
+            </button>
+          </div>
         </div>
       </>
     );
@@ -373,6 +416,41 @@ const MeetingDetails = ({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
           Phone copied!
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full">
+            <div className="mb-4">
+              <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
+                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 text-center mb-2">
+                Clear Meeting Data?
+              </h3>
+              <p className="text-gray-600 text-center text-sm">
+                Are you sure you want to clear this meeting? The time slot will remain available for booking.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={handleDelete}
+                className="flex-1 bg-red-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-red-700 transition-colors"
+              >
+                Clear Data
+              </button>
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="flex-1 bg-gray-200 text-gray-700 px-4 py-2.5 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

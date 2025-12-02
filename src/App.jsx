@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Calendar from './components/Calendar';
 import MeetingDetails from './components/MeetingDetails';
 import { initialMeetings, eventDates } from './utils/mockData';
@@ -18,6 +18,23 @@ function App() {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Load meetings from Supabase or mock data
+  const loadMeetings = useCallback(async () => {
+    setIsLoading(true);
+
+    const { data, error } = await fetchMeetings('sigma-rome-2025');
+
+    if (error) {
+      if (import.meta.env.DEV) console.error('Error loading meetings:', error);
+      // Fallback to mock data
+      setMeetings(initialMeetings);
+    } else {
+      setMeetings(data || []);
+    }
+
+    setIsLoading(false);
+  }, []);
+
   // Load meetings on mount
   useEffect(() => {
     loadMeetings();
@@ -26,9 +43,16 @@ function App() {
     let subscription = null;
     if (isSupabaseConfigured()) {
       subscription = subscribeToMeetings('sigma-rome-2025', (payload) => {
-        console.log('Real-time update:', payload);
-        // Reload meetings on any change
-        loadMeetings();
+        if (import.meta.env.DEV) console.log('Real-time update:', payload);
+        
+        // Optimistically update state based on event type
+        if (payload.eventType === 'INSERT') {
+          setMeetings(prev => [...prev, payload.new]);
+        } else if (payload.eventType === 'UPDATE') {
+          setMeetings(prev => prev.map(m => m.id === payload.new.id ? payload.new : m));
+        } else if (payload.eventType === 'DELETE') {
+          setMeetings(prev => prev.filter(m => m.id !== payload.old.id));
+        }
       });
     }
 
@@ -38,24 +62,7 @@ function App() {
         subscription.unsubscribe();
       }
     };
-  }, []);
-
-  // Load meetings from Supabase or mock data
-  const loadMeetings = async () => {
-    setIsLoading(true);
-
-    const { data, error } = await fetchMeetings('sigma-rome-2025');
-
-    if (error) {
-      console.error('Error loading meetings:', error);
-      // Fallback to mock data
-      setMeetings(initialMeetings);
-    } else {
-      setMeetings(data || []);
-    }
-
-    setIsLoading(false);
-  };
+  }, [loadMeetings]);
 
   // Handle slot click (empty or filled)
   const handleSlotClick = (timeSlot, meeting) => {
@@ -73,49 +80,60 @@ function App() {
 
   // Handle save meeting (create or update)
   const handleSaveMeeting = async (formData) => {
-    console.log('🔵 App.jsx handleSaveMeeting - Received formData:', formData);
-    console.log('🔵 meeting_summary in formData:', formData.meeting_summary);
+    if (import.meta.env.DEV) {
+      console.log('🔵 App.jsx handleSaveMeeting - Received formData:', formData);
+      console.log('🔵 meeting_summary in formData:', formData.meeting_summary);
+    }
+
+    // Check if this is a "clear meeting" operation (all fields empty except date/time/status)
+    const isClearing = selectedMeeting && 
+      !formData.company_name && 
+      !formData.twg_person && 
+      !formData.partner;
 
     if (selectedMeeting) {
       // Update existing meeting
-      console.log('🔵 Updating existing meeting ID:', selectedMeeting.id);
+      if (import.meta.env.DEV) console.log('🔵 Updating existing meeting ID:', selectedMeeting.id);
+      
+      // Optimistic update
+      const updatedMeeting = { ...selectedMeeting, ...formData };
+      setMeetings(prev =>
+        prev.map(m =>
+          m.id === selectedMeeting.id ? updatedMeeting : m
+        )
+      );
+
       const { error } = await updateMeeting(selectedMeeting.id, formData);
 
       if (error) {
-        console.error('Error updating meeting:', error);
-        alert('Failed to update meeting');
+        if (import.meta.env.DEV) console.error('Error updating meeting:', error);
+        alert(isClearing ? 'Failed to clear meeting data' : 'Failed to update meeting');
+        // Rollback on error
+        setMeetings(prev =>
+          prev.map(m =>
+            m.id === selectedMeeting.id ? selectedMeeting : m
+          )
+        );
         return;
       }
-
-      // Update local state
-      setMeetings(prev =>
-        prev.map(m =>
-          m.id === selectedMeeting.id
-            ? { ...m, ...formData }
-            : m
-        )
-      );
     } else {
       // Create new meeting
-      console.log('🔵 Creating new meeting');
+      if (import.meta.env.DEV) console.log('🔵 Creating new meeting');
       const { data, error } = await createMeeting(formData);
 
       if (error) {
-        console.error('Error creating meeting:', error);
+        if (import.meta.env.DEV) console.error('Error creating meeting:', error);
         alert('Failed to create meeting');
         return;
       }
 
-      // Add to local state
-      setMeetings(prev => [...prev, data]);
+      // Add to local state (real-time subscription will also add it, but this is immediate)
+      if (!isSupabaseConfigured()) {
+        setMeetings(prev => [...prev, data]);
+      }
     }
 
     handleCloseDetails();
-
-    // Reload to ensure sync with database
-    if (isSupabaseConfigured()) {
-      loadMeetings();
-    }
   };
 
 
