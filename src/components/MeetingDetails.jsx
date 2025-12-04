@@ -205,21 +205,6 @@ const MeetingDetails = ({
             </div>
           )}
 
-          {/* Partner Email */}
-          {formData.partner_email && (
-            <div className="bg-app-bg dark:bg-dark-app-bg rounded-card p-4 border border-gray-200 dark:border-gray-700 transition-theme duration-300">
-              <div className="text-sm font-medium text-secondary-text dark:text-dark-secondary-text mb-1">Partner Email</div>
-              <div className="text-base text-accent dark:text-dark-accent font-medium">{formData.partner_email}</div>
-              {formData.send_calendar_invite && (
-                <div className="mt-2 flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/>
-                  </svg>
-                  Calendar invite sent
-                </div>
-              )}
-            </div>
-          )}
 
           {/* Location */}
           {formData.location && (
@@ -364,50 +349,6 @@ const MeetingDetails = ({
             />
           </div>
 
-          {/* Partner Email */}
-          <div>
-            <label className="block text-sm font-medium text-primary-text dark:text-dark-primary-text mb-2">
-              Partner Email
-            </label>
-            <input
-              type="email"
-              name="partner_email"
-              value={formData.partner_email}
-              onChange={handleChange}
-              placeholder="partner@company.com"
-              className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-card bg-card-bg dark:bg-dark-card-bg text-primary-text dark:text-dark-primary-text placeholder-secondary-text dark:placeholder-dark-secondary-text focus:outline-none focus:ring-2 focus:ring-accent dark:focus:ring-dark-accent transition-theme duration-300"
-            />
-            <p className="mt-1 text-xs text-secondary-text dark:text-dark-secondary-text">
-              Required for sending Google Calendar invitations
-            </p>
-          </div>
-
-          {/* Send Calendar Invite Toggle */}
-          <div className="flex items-center justify-between p-4 bg-app-bg dark:bg-dark-app-bg rounded-card border border-gray-200 dark:border-gray-700 transition-theme duration-300">
-            <div className="flex items-center gap-3">
-              <svg className="w-5 h-5 text-accent dark:text-dark-accent" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z"/>
-              </svg>
-              <div>
-                <label htmlFor="send_calendar_invite" className="text-sm font-medium text-primary-text dark:text-dark-primary-text cursor-pointer">
-                  Send Calendar Invite
-                </label>
-                <p className="text-xs text-secondary-text dark:text-dark-secondary-text">
-                  Automatically create Google Calendar event and send invitation
-                </p>
-              </div>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                id="send_calendar_invite"
-                name="send_calendar_invite"
-                checked={formData.send_calendar_invite}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-gray-300 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-accent/20 dark:peer-focus:ring-dark-accent/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent dark:peer-checked:bg-dark-accent"></div>
-            </label>
-          </div>
 
           {/* Location */}
           <div>
