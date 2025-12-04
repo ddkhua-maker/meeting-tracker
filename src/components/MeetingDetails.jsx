@@ -17,11 +17,9 @@ const MeetingDetails = ({
     company_name: '',
     partner: '',
     phone: '',
-    partner_email: '',
     location: '',
     agenda: '',
     meeting_summary: '',
-    send_calendar_invite: false
   });
 
   // Initialize form with meeting data or defaults
@@ -33,11 +31,9 @@ const MeetingDetails = ({
         company_name: meeting.company_name || '',
         partner: meeting.partner || '',
         phone: meeting.phone || '',
-        partner_email: meeting.partner_email || '',
         location: meeting.location || '',
         agenda: meeting.agenda || '',
         meeting_summary: meeting.meeting_summary || '',
-        send_calendar_invite: meeting.send_calendar_invite || false
       });
       setIsEditing(false); // Start in view mode for existing meetings
     } else {
@@ -47,11 +43,9 @@ const MeetingDetails = ({
         company_name: '',
         partner: '',
         phone: '',
-        partner_email: '',
         location: '',
         agenda: '',
         meeting_summary: '',
-        send_calendar_invite: false
       });
       setIsEditing(true); // Start in edit mode for new meetings
     }
@@ -409,7 +403,6 @@ const MeetingDetails = ({
                 id="send_calendar_invite"
                 name="send_calendar_invite"
                 checked={formData.send_calendar_invite}
-                onChange={(e) => setFormData(prev => ({ ...prev, send_calendar_invite: e.target.checked }))}
                 className="sr-only peer"
               />
               <div className="w-11 h-6 bg-gray-300 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-accent/20 dark:peer-focus:ring-dark-accent/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent dark:peer-checked:bg-dark-accent"></div>
