@@ -138,10 +138,6 @@ const EventSettings = ({ onClose }) => {
             </p>
           </div>
 
-          {/* Google Calendar Integration */}
-          <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-            <GoogleCalendarConnect />
-
           {/* Preview */}
           <div className="bg-accent/10 dark:bg-dark-accent/10 border border-accent/20 dark:border-dark-accent/20 rounded-lg p-4">
             <p className="text-sm font-medium text-primary-text dark:text-dark-primary-text mb-1">
