@@ -13,7 +13,7 @@
     "server": "node server/index.js"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.76.1",
+    "@supabase/supabase-js": "^2.86.2",
     "cors": "^2.8.5",
     "express": "^5.2.1",
     "googleapis": "^166.0.0",
