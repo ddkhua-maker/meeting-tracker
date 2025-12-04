@@ -135,9 +135,7 @@ function App() {
 
       // Create Google Calendar event if enabled
       // Add to local state (real-time subscription will also add it, but this is immediate)
-      if (!isSupabaseConfigured()) {
         setMeetings(prev => [...prev, data]);
-      }
     }
 
     handleCloseDetails();
