@@ -106,3 +106,4 @@ The app works in two modes:
 - **In Process**: Yellow background (#FCD34D)
 - **Add Meeting**: Blue (#4299E1)
 
+
