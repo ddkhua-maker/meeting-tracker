@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useEvent } from '../context/EventContext';
-import GoogleCalendarConnect from './GoogleCalendarConnect';
 
 const EventSettings = ({ onClose }) => {
   const { eventConfig, updateEventConfig, getEventDuration } = useEvent();
@@ -142,7 +141,6 @@ const EventSettings = ({ onClose }) => {
           {/* Google Calendar Integration */}
           <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
             <GoogleCalendarConnect />
-          </div>
 
           {/* Preview */}
           <div className="bg-accent/10 dark:bg-dark-accent/10 border border-accent/20 dark:border-dark-accent/20 rounded-lg p-4">
